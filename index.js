@@ -90,21 +90,6 @@ async function main() {
         }
 
         response.status(output.status);
-        let setCookie = output.headers['set-cookie'];
-        if (setCookie) {
-            setCookie.forEach((line) => {
-                let path = '/';
-                let httpOnly = line.includes('HttpOnly');
-                let name = line.split('=')[0]
-                let value = line.split('=')[1].split(';')[0]
-                let expiry = new Date(line.split('expires=')[1].split(';')[0]).getTime() - Date.now();
-                response.cookie(name, value, expiry,
-                    {
-                        httpOnly,
-                        path
-                    });
-            })
-        }
         response.setHeaders(output.headers);
         response.send(output.body);
     })
