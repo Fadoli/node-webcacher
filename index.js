@@ -1,40 +1,35 @@
 const HyperExpress = require('hyper-express');
 
+const port = 4242;
+const target = "ogamex.net"
+
+function shouldBeCached(url) {
+    if (
+        url.includes('.css')
+        || url.includes('.min.js')
+        || url.includes('.js')
+        || url.includes('.jpg')
+        || url.includes('.png')
+        || url.includes('.gif')
+        || url.includes('.ico')
+        || url.includes('.webp')
+    ) {
+        return true;
+    }
+    return false;
+}
+
+function shouldAvoid(url) {
+    if (url.includes('cdn-cgi/challenge-platform')) {
+        return true;
+    }
+    return false;
+}
+
 async function main() {
     const fetch = (await import('node-fetch')).default
-
     const webserver = new HyperExpress.Server();
-    const port = 4242;
 
-    /**
-     * @description
-     * @param {string} url
-     * @returns {boolean} 
-     */
-    function shouldBeCached(url) {
-        if (
-            url.includes('.css')
-            || url.includes('.min.js')
-            || url.includes('.js')
-            || url.includes('.jpg')
-            || url.includes('.png')
-            || url.includes('.gif')
-            || url.includes('.ico')
-            || url.includes('.webp')
-        ) {
-            return true;
-        }
-        return false;
-    }
-
-    function shouldAvoid(url) {
-        if (url.includes('cdn-cgi/challenge-platform')) {
-            return true;
-        }
-        return false;
-    }
-
-    const target = "ogamex.net"
 
     const cached = {};
 
@@ -44,11 +39,9 @@ async function main() {
         body: '!!! Error !!!',
     };
 
-    // Create GET route to serve 'Hello World'
     webserver.use(async (request, response) => {
         const url = `https://${request.hostname.replace('localhost', target)}${request.url}`
         // console.log(url)
-
 
         let output = defaultOutput;
         if (cached[url]) {
@@ -80,7 +73,7 @@ async function main() {
             }
             // cache ?!
             if (shouldBeCached(url)) {
-                output.headers['cache-control']='max-age=30000';
+                output.headers['cache-control'] = 'max-age=30000';
                 if (request.method === 'GET' || request.method === 'HEAD') {
                     cached[url] = output;
                 }
