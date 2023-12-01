@@ -1,44 +1,5 @@
 const HyperExpress = require('hyper-express');
 
-const https = require('https');
-const http = require('http');
-
-/**
- * @description
- * @param {string} url
- * @param {*} opts
- * @returns {Promise<{headers: {}, status: number, body: Stream}>}
- */
-async function webRequest(url, opts) {
-    let whoToCall = http;
-    if (url.startsWith('https')) {
-        whoToCall = https;
-    }
-    let output = {
-        status: 200,
-        headers: {},
-        body: undefined,
-    }
-
-    let headers = { ...opts.headers };
-    opts = { ...opts, headers: headers }
-    delete headers.host;
-
-    return new Promise((res, rej) => {
-        const temp = whoToCall.request(url, opts, (response) => {
-            output.status = response.statusCode;
-            output.headers = response.headers;
-            output.stream = response;
-            res(output);
-        })
-        temp.on('error', rej);
-        if (opts.body) {
-            temp.write(opts.body);
-        }
-    })
-}
-
-
 async function main() {
     const fetch = (await import('node-fetch')).default
 
