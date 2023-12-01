@@ -1,0 +1,16 @@
+{
+    "name": "webcacher",
+    "version": "1.0.0",
+    "description": "cache website to go faster",
+    "main": "index.js",
+    "scripts": {
+        "start": "node ./index",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "dependencies": {
+        "hyper-express": "^6.8.7",
+        "node-fetch": "^3.3.2"
+    },
+    "author": "fadoli03",
+    "license": "ISC"
+}
